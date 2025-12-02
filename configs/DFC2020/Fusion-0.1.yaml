@@ -1,0 +1,75 @@
+EXPERIMENT:
+  PROJECT: "DFC2020"
+  NAME: "Fusion-0.1"
+  TAG: "MCFMamba"
+  SEED_VALUE: 42
+  ALGO_DETER: True
+DATASET:
+  TRAIN_VAL_SETS: "DFC2020"
+  TEST_SET: "DFC2020"
+  NUM_WORKERS: 0
+  BATCH_SIZE: 8
+  SPLIT_SPECS:
+    [ {
+      'repartition': False,
+      'trainval_rate': 0.8,
+      'train_rate': 0.1,
+    } ]
+  LOAD_SPECS:
+    [ {
+      'modality': { 'train': 'OPT_SAR', 'val': 'OPT_SAR','test': 'OPT_SAR' },
+    } ]
+  AUGMENT_SPECS:
+    [ {
+      "train_augs": {
+        "Flip": { "p": 0.5 },
+        "RandomRotate90": { "p": 0.5 },
+      },
+      "augs_probs": {
+        "train_p": 0.5,
+      },
+      "additional_targets": {
+        'image_sar': 'image',
+      }
+    } ]
+MODELER:
+  TYPE: "Vanilla"
+  MODEL: "MCFMamba"
+  MODEL_SPECS:
+    [ {
+      'backbone_name': "VssmTiny",
+      'fusion': "FusionMCMF",
+      'decoder_name': "UDecoderVM",
+      'pretrained': True,
+    } ]
+  LOSS_SPECS:
+    [ {
+      'losses_params': {
+        'CrossEntropyLoss': ~,
+        'DiceLoss': {
+          'mode': 'multiclass',
+          'from_logits': True
+        },
+      },
+      'losses_weight': {
+        'CrossEntropyLoss': 1.0,
+        'DiceLoss': 1.0,
+      }
+    } ]
+SOLVER:
+  TRAINER: "Base"
+  TESTER: "Base"
+  BATCH_SIZE: 8
+  EPOCHS: &e 100
+  PATIENCE: 10
+  OPTIMIZER_TYPE: "AdamW"
+  LR: 0.0001
+  SCHEDULER_TYPE: "SchedulerByIter"
+  SCHEDULER_SPECS:
+    [ {
+      'mode': 'poly',
+      'total_epochs': *e,
+      'warmup_epochs': 0,
+    } ]
+  SAVE_CPT_FREQ: 10
+  LOG_PREFIX: "../Output"

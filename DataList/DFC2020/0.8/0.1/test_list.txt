@@ -1,0 +1,2 @@
+id,lbl,opt,sar
+ROIs0000_autumn_dfc_CapeTown_p797,E:\Data\DFC2020\ROIs0000_autumn\dfc_CapeTown\ROIs0000_autumn_dfc_CapeTown_p797.tif,E:\Data\DFC2020\ROIs0000_autumn\s2_CapeTown\ROIs0000_autumn_s2_CapeTown_p797.tif,E:\Data\DFC2020\ROIs0000_autumn\s1_CapeTown\ROIs0000_autumn_s1_CapeTown_p797.tif

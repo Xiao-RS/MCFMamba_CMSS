@@ -101,6 +101,7 @@ if __name__ == "__main__":
         ],
     }
     for i in ['0.1', '0.3', '0.6', '1.0']:
+
         # train adjust
         cfg = CFG.clone()
         f_yaml = r'E:\Code\MCFMambaCMSS\configs\DFC2020\Adjust-0.1.yaml'

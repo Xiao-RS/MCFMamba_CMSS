@@ -1,0 +1,65 @@
+EXPERIMENT:
+  PROJECT: "DFC2020"
+  NAME: "MSS"
+  TAG: "comp"
+  SEED_VALUE: 42
+  ALGO_DETER: False
+DATASET:
+  TRAIN_VAL_SETS: "DFC2020"
+  NUM_WORKERS: 0
+  BATCH_SIZE: &b 8
+  SPLIT_SPECS:
+    [ {
+      repartition: False,
+      'trainval_rate': 0.8,
+      'train_rate': 1.0,
+    } ]
+  LOAD_SPECS:
+    [ {
+      'modality': { 'train': 'OPT_SAR_MSS' },
+      'batch_size': *b,
+      'mask_patch_size': 32,
+      'model_patch_size': 4,
+      'mask_ratio': 0.5,
+      'mask_strategy': 'comp',
+    } ]
+  AUGMENT_SPECS:
+    [ {
+      'train_augs': {
+        'Flip': { 'p': 0.5 },
+        'RandomRotate90': { 'p': 0.5 },
+      },
+      'augs_probs': {
+        'train_p': 0.5,
+      },
+      'additional_targets': {
+        'image_sar': 'image'
+      }
+    } ]
+MODELER:
+  TYPE: "MSS"
+  MODEL: "EncFusDec"
+  MODEL_SPECS:
+    [ {
+      'backbone_name': "VssmTiny",
+      'fusion': "FusionMCMF",
+      'decoder_name': "UDecoderVM",
+      'pretrained': True,
+    } ]
+SOLVER:
+  TRAINER: "NoVal"
+  BATCH_SIZE: 8
+  EPOCHS: &e 300
+  PATIENCE: *e
+  OPTIMIZER_TYPE: "AdamW"
+  LR: 0.0001
+  SCHEDULER_TYPE: "SchedulerByIter"
+  SCHEDULER_SPECS:
+    [ {
+      'mode': 'poly',
+      'total_epochs': *e,
+      'warmup_epochs': 0,
+    } ]
+  DISTRIBUTED: False
+  SAVE_CPT_FREQ: 1
+  LOG_PREFIX: "../Output"
